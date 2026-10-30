@@ -92,6 +92,7 @@ def prepare_input_and_forward_pass(sub_problem: TSPSubProblem, net: Module, knns
         node_features, edge_features, problem_data = prepare_data([knn_dist_matrices, None], sub_problem.problem_name)
 
         knn_scores = net(node_features, edge_features, problem_data)
+        knn_scores = pad_origin_destination(knn_scores) #nouveau : 
         # create result tensor for scores with all -inf elements
         scores = torch.full((bs, num_nodes), -np.inf, device=knn_scores.device)
         # and put computed scores for KNNs
@@ -100,8 +101,16 @@ def prepare_input_and_forward_pass(sub_problem: TSPSubProblem, net: Module, knns
         node_features, edge_features, problem_data = prepare_data([sub_problem.dist_matrices, None],
                                                                   sub_problem.problem_name)
         scores = net(node_features, edge_features, problem_data)
+        scores = pad_origin_destination(scores)
 
     return scores
+
+
+#--nouveau (maintenant)
+def pad_origin_destination(scores: Tensor) -> Tensor:
+    # le reseau renvoie n scores, la boucle de decodage en attend n + 2
+    pad = torch.full((scores.shape[0], 1), -np.inf, device=scores.device)
+    return torch.cat([pad, scores, pad], dim=1)
 
 def decoding_step(sub_problem: TSPSubProblem, net: Module, knns: int, sample: bool) -> (Tensor, TSPSubProblem):
     scores = prepare_input_and_forward_pass(sub_problem, net, knns)

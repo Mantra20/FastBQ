@@ -1,0 +1,40 @@
+activation_edge_adapter: relu
+activation_ff: relu
+aimstack_dir: null
+backends: '10000'
+beam_size: 1
+commit_id: f9bd6ae5cc540d664f6da908d375a4d45ab82805
+debug: false
+dim_emb: 64
+dim_ff: 256
+dim_node_idx: 1
+edge_feature_low_dim: 4
+job_id: 0
+knns: -1
+lr: 0.0005
+lr_gamma: 0.97
+node_feature_low_dim: 8
+num_heads: 4
+num_layers: 3
+num_total_epochs: 30
+output_dir: output/tsp20_bq
+pretrained_model: null
+problems:
+- tsp
+project_name: null
+seed: 0
+test_batch_size: 128
+test_datasets:
+- data/tsp20_val.npz
+test_datasets_size: null
+test_every: 0
+train_batch_size: 64
+train_datasets:
+- data/tsp20_train.npz
+train_datasets_size: 1000000
+update_lr_every_n_epoch: 10
+val_batch_size: 128
+val_datasets:
+- data/tsp20_val.npz
+val_datasets_size: null
+val_every: 1

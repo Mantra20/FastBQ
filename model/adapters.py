@@ -41,13 +41,22 @@ class NodeAdapter(nn.Module):
 
         if problem_name in ["mvc", "mis"]:
             node_emb = node_rand_emb
-        elif problem_name in "tsp":
-            node_emb = node_rand_emb
+
+        #--anciennement
+        #elif problem_name in "tsp":
+        #    node_emb = node_rand_emb
 
             # for tsp, only features are origin and destination tokens
-            node_orig_dest_emb = self.input_node_projection(self.tsp)
-            node_emb[:, 0, :] = node_rand_emb[:, 0, :] + node_orig_dest_emb[0]
-            node_emb[:, -1, :] = node_rand_emb[:, -1, :] + node_orig_dest_emb[1]
+       #     node_orig_dest_emb = self.input_node_projection(self.tsp)
+       #     node_emb[:, 0, :] = node_rand_emb[:, 0, :] + node_orig_dest_emb[0]
+       #     node_emb[:, -1, :] = node_rand_emb[:, -1, :] + node_orig_dest_emb[1]
+        
+       #--maintenant 
+        elif problem_name == "tsp":
+            # projette (a_i, b_i) : 2 -> 8 -> 128, ajoute a l'identifiant aleatoire
+            node_proto_emb = node_features @ self.tsp
+            node_emb = node_rand_emb + self.input_node_projection(node_proto_emb)
+        
         elif problem_name in ["trp", "sop"]:
             node_emb = node_rand_emb
             # for trp, only feature is origin tokens

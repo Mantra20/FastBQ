@@ -132,9 +132,18 @@ def prepare_routing_data(data, problem, subproblem_size=0) -> tuple[Tensor, Tens
 
     if problem == "tsp":
         dist_matrices, _ = data
-        node_features = None
+        #--anciennement : toute la matrice entrait comme aretes, origine et destination comprises, sans features de noeud
+        # node_features = None
+        # dist_matrices = dist_matrices[:, subproblem_size:, subproblem_size:]
+        # edge_features = dist_matrices
+
+        #--maintenant : origine et destination retirees, leurs couts deviennent a_i et b_i sur chaque site
         dist_matrices = dist_matrices[:, subproblem_size:, subproblem_size:]
-        edge_features = dist_matrices
+        d = dist_matrices[..., 0]                    # d[i, j] = cout i à j
+        a = d[:, 0, 1:-1]                            # a_i = cout origine vaut i
+        b = d[:, 1:-1, -1]                           # b_i = cout i -> destination
+        node_features = torch.stack([a, b], dim=-1)  # chaque site porte (a_i, b_i)
+        edge_features = dist_matrices[:, 1:-1, 1:-1] # c entre les sites de I seulement
         problem_data = {"problem_name": problem, "loss": "single_cross_entropy", "is_multitype": False,
                         "seq_len_per_type": None}
     elif problem == "trp":
@@ -367,8 +376,16 @@ def prepare_graph_data(data, problem, subproblem_size=0):
 
 def create_ground_truth(bs, problem_data, device):
     problem = problem_data["problem_name"]
-    if problem in ["tsp", "trp", "op", "sop"]:
+    #--anciennement
+    #if problem in ["tsp", "trp", "op", "sop"]:
+    #   ground_truth = torch.ones((bs, ), dtype=torch.long, device=device)
+    #c-- maintenant
+    if problem == "tsp":
+    # l'origine n'est plus un noeud : le prochain site est a l'index 0
+        ground_truth = torch.zeros((bs, ), dtype=torch.long, device=device)
+    elif problem in ["trp", "op", "sop"]:
         ground_truth = torch.ones((bs, ), dtype=torch.long, device=device)
+
     elif problem in ["cvrp", "cvrptw", "sdcvrp", "ocvrp"]:
         assert "via_depots" in problem_data
         ground_truth = torch.full((bs,), 2, dtype=torch.long, device=device)

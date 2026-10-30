@@ -77,7 +77,10 @@ class GOAL(Module):
         # masking
         if problem_data["problem_name"] == "tsp":
             # mask origin and destination
-            scores[:, 0] = scores[:, -1] = -np.inf
+            #--anciennement
+            #scores[:, 0] = scores[:, -1] = -np.inf
+            #--maintenant (on peut choisir l'origine et l'arrivee ce qui n'etait pas possible avant)
+            pass #=> tous les sites de I sont faisables
         elif problem_data["problem_name"] == "trp":
                 # mask origin and destination
                 scores[:, 0] = -np.inf
