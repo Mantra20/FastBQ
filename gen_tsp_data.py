@@ -1,7 +1,5 @@
 """
 Genere un petit jeu TSP euclidien au format GOAL, pour un entrainement rapide.
-A lancer depuis la racine du repo :  python gen_tsp_data.py
-Cree data/tsp20_train.npz (noeuds ranges dans l'ordre du tour) et data/tsp20_val.npz.
 Les tours de reference viennent d'un 2-opt avec redemarrages : proches de l'optimum,
 pas garantis optimaux (un gap legerement negatif est donc possible).
 """
