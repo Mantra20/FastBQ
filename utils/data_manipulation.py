@@ -132,9 +132,11 @@ def prepare_routing_data(data, problem, subproblem_size=0) -> tuple[Tensor, Tens
 
     if problem == "tsp":
         dist_matrices, _ = data
-        node_features = None
         dist_matrices = dist_matrices[:, subproblem_size:, subproblem_size:]
-        edge_features = dist_matrices
+        start_costs= dist_matrices[: , 0, : , 0]
+        end_costs = dist_matrices[:, :, -1, 0]
+        node_features = torch.stack([start_costs, end_costs], dim=-1) #B,L,2
+        edge_features = None
         problem_data = {"problem_name": problem, "loss": "single_cross_entropy", "is_multitype": False,
                         "seq_len_per_type": None}
     elif problem == "trp":
@@ -234,6 +236,7 @@ def prepare_routing_data(data, problem, subproblem_size=0) -> tuple[Tensor, Tens
     else:
         raise NotImplementedError
 
+    print(data)
     return node_features, edge_features, problem_data
 
 

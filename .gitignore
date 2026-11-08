@@ -1,0 +1,7 @@
+# Documentation d'architecture, audits et notes conserves uniquement en local.
+/docs-local/
+.venv/
+*.pyc
+.pytest_cache/
+output/
+
